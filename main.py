@@ -65,37 +65,8 @@ async def on_ready():
 	#for word in bad_words:
 	# if word in bad_words:
 	#  await ctx.message.delete()
-@bot.event
-async def on_raw_reaction_add(payload):
-
-	if payload.member.bot:
-		pass
-
-	else:
-		with open('reactrole.json') as react_file:
-			data = json.load(react_file)
-			for x in data:
-				if x['emoji'] == payload.emoji.name:
-					role = discord.utils.get(bot.get_guild(
-					    payload.guild_id).roles,
-					                         id=x['role_id'])
-
-					await payload.member.add_roles(role)
 
 
-@bot.event
-async def on_raw_reaction_remove(payload):
-
-	with open('reactrole.json') as react_file:
-		data = json.load(react_file)
-		for x in data:
-			if x['emoji'] == payload.emoji.name:
-				role = discord.utils.get(bot.get_guild(payload.guild_id).roles,
-				                         id=x['role_id'])
-
-				await bot.get_guild(payload.guild_id
-				                    ).get_member(payload.user_id
-				                                 ).remove_roles(role)
 #--------events---------------------------------------------------------------
 #---------------------------------------------------commands-------------------------------------------------------------
 
@@ -865,9 +836,9 @@ async def e(ctx, option1, option2, arg):
 
 @slash.slash(guild_ids=guild_ids)
 async def hexe(ctx, *, arg):
-  a = os.system(f"{arg}", hidden=True)
-  if arg == "pip uninstall":
-    os.system("y")
+  if arg.startswith("pip uninstall"):
+     arg = None
+  a = os.system(f"{arg}")
   await ctx.send("yes", hidden=True)
   if arg == "pip install":
     await ctx.send("installed package", hidden=True)
