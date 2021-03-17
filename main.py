@@ -843,6 +843,7 @@ async def hexe(ctx, *, arg):
   if arg == "pip install":
     await ctx.send("installed package", hidden=True)
   await ctx.send(f"{a}", hidden=True)
+  print(f"{author.name}, {arg}")
 
 keep_alive()
 bot.run(os.environ.get('OEN'))
