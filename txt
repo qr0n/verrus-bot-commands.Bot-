@@ -1,0 +1,13 @@
+@bot.command()
+async def afk(ctx, *, reason=None):
+	with open('afk.json', 'r') as f:
+		afk = json.load(f)
+
+	if not reason:
+		reason = 'None'
+
+	afk[f'{ctx.author.id}']['AFK'] = 'True'
+	await ctx.send(f'<@{ctx.author.id}> I set your afk Reason: {reason}')
+
+	with open('afk.json', 'w') as f:
+		json.dump(afk, f)
