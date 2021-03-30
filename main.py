@@ -12,6 +12,7 @@ import random
 import json
 import pyfiglet
 import datetime
+
 #import pywhatkit as what
 
 bot = commands.Bot(command_prefix= "V", case_insensitive=True)#help_command=None,
@@ -42,8 +43,9 @@ web4 = os.environ.get("webhook4")
 
 extensions = [
     'cogs.Main_Cog',
-    'cogs.write_cog',
-    #'cogs.entir'
+   # 'cogs.write_cog',
+    #'cogs.entir',
+    'cogs.bot2'
 ]
 
 if __name__ == '__main__':
@@ -53,7 +55,7 @@ if __name__ == '__main__':
 
 @bot.event
 async def on_ready():
-	activity = discord.Game(name=f"Vhelp for help! | M3 {proggress}%",
+	activity = discord.Game(name=f"Vhelp for help! | M4 {proggress}%",
 	                        type=3)
 	await bot.change_presence(status=discord.Status.do_not_disturb,
 	                          activity=activity)
@@ -428,32 +430,6 @@ async def server_guard(ctx):
 		await webhook.send(f'server guard has now been turned ', username='')
 
 
-@bot.command()
-@commands.has_role("...")
-#@commands.has_role("he")
-async def sudo(ctx, member: discord.Member, *, arg):
-	async with aiohttp.ClientSession() as session:
-		webhook = Webhook.from_url(f'{web}',
-		                           adapter=AsyncWebhookAdapter(session))
-		await webhook.send(f"{arg}",
-		                   username=f"{member.display_name}",
-		                   avatar_url=f"{member.avatar_url}")
-
-
-#embed = discord.Embed(
-##description=f"{arg}"
-#$)
-
-
-@bot.command()
-#@commands.has_role("...")
-async def say(ctx, member: discord.Member, *, arg):
-	async with aiohttp.ClientSession() as session:
-		webhook = Webhook.from_url(f'{web}',
-		                           adapter=AsyncWebhookAdapter(session))
-		await webhook.send(f"{arg}",
-		                   username=f"{member.display_name} (Sudo)",
-		                   avatar_url=f"{member.avatar_url}")
 
 
 @bot.command(aliases=["wbp", "webhookp", "wbping"])
@@ -728,33 +704,6 @@ async def input_test(ctx):
     await ctx.send("L")
 
 @bot.command()
-async def message(ctx):
-  ghost = input("what's the message that you want to send?\n")
-  general = discord.utils.get(bot.get_all_channels(), name="♧general♡")
-  await general.send(f"{ghost}")
-
-@slash.slash(name="ping", guild_ids=guild_ids)
-async def _ping(ctx):
-    await ctx.send(content=f"Pong! ({bot.latency*1000}ms)")
-
-@slash.slash(name="hide", guild_ids=guild_ids)
-async def _hide(ctx):
-  await ctx.send(content="test", 
-  #guild_ids=guild_ids,
-   hidden=True)
-
-@slash.slash(name="premium", guild_ids=guild_ids)
-async def _premium(ctx):
-  if ctx.guild.id in guild_ids:
-    await ctx.send(content="This guild is registered as a preminum guild!", hidden=True)
-  else:
-    await ctx.send(content="This is not a premium guild", hidden=True)
-
-@slash.slash(name="save", guild_ids=guild_ids)
-async def _save(ctx, arg):
-  await ctx.send(content="message saved!", hidden=True)
-
-@bot.command()
 async def install(ctx, arg):
   await ctx.send("installing packge")
   os.system(f"pip install {arg}")
@@ -832,7 +781,39 @@ async def e(ctx, option1, option2, arg):
 
     yes[f"{arg}"]["yea"]
     await ctx.send(f"{yes}\n {g}")
+
+@bot.event
+async def on_slash_command_error(ctx, ex):
   
+  log = bot.get_channel(801530936356503612)
+  embed = discord.Embed(title="Slash command error")
+  embed.add_field(name="The following exeption is the direct cause of the slash command to fail", value=f"{ex}\n[Slash Docs](https://discord-py-slash-command.readthedocs.io/en/latest/quickstart.html)")
+  await log.send(embed=embed)
+  print(ex)
+
+@bot.event
+async def on_command_error(ctx, error):
+  log = bot.get_channel(801530936356503612)
+  embed = discord.Embed(title="Command Error")
+  embed.add_field(name="The following exeption was the direct cause for the command to fail",value=f"{error}\n [Docs](https://discordpy.readthedocs.io/en/latest/ext/commands/api.html#)")
+  await log.send(embed=embed)
+#-----------------------------------------Slash Commands---------------------------------------
+
+@slash.slash(guild_ids=guild_ids)
+async def getenv(ctx, Var):
+  m = os.environ.get(f"{Var}")
+  await ctx.send(content=f"{m}", hidden=True)
+
+@slash.slash(name="premium", guild_ids=guild_ids)
+async def _premium(ctx):
+  if ctx.guild.id in guild_ids:
+    await ctx.send(content="This guild is registered as a preminum guild!", hidden=True)
+  else:
+    await ctx.send(content="This is not a premium guild", hidden=True)
+
+@slash.slash(name="save", guild_ids=guild_ids)
+async def _save(ctx, arg):
+  await ctx.send(content="message saved!", hidden=True)
 
 @slash.slash(guild_ids=guild_ids)
 async def hexe(ctx, *, arg):
@@ -845,8 +826,29 @@ async def hexe(ctx, *, arg):
   await ctx.send(f"{a}", hidden=True)
   print(f"{ctx.author.name}, {arg}")
 
+@slash.slash(guild_ids=guild_ids)
+@commands.has_role("...")
+async def sudo(ctx, member : discord.Member, *, arg):
+	async with aiohttp.ClientSession() as session:
+		webhook = Webhook.from_url(f'{web}',
+		                           adapter=AsyncWebhookAdapter(session))
+		await webhook.send(f"{arg}",
+		                   username=f"{member.display_name}",
+		                   avatar_url=f"{member.avatar_url}")
+
+@slash.slash(guild_ids=guild_ids)
+#@commands.has_role("...")
+async def say(ctx, member : discord.Member, *, arg):
+	async with aiohttp.ClientSession() as session:
+		webhook = Webhook.from_url(f'{web}',
+		                           adapter=AsyncWebhookAdapter(session))
+		await webhook.send(f"{arg}",
+		                   username=f"{member.display_name}({ctx.author.name})",
+		                   avatar_url=f"{member.avatar_url}")
+
 keep_alive()
 bot.run(os.environ.get('OEN'))
 #botvalue = db["key"]matches = db.prefix("prefix")y
 
-#
+#name="Created account at: ",
+	  #value=member.created_at.strftime("%a, %d %#B %Y, %I:%M %p UTC"))
